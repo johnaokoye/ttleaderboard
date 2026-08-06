@@ -19,6 +19,8 @@ docker compose down -v          # stop and wipe the database
 
 The app is on host port **8082** (mapped to container port 3000 in `docker-compose.yml`) — 3000/5000/5432/8080 were already bound on the host dev machine. Adjust the `ports` mapping in `docker-compose.yml` if that changes.
 
+Both services have `restart: unless-stopped`. This matters more than it looks: `depends_on: condition: service_healthy` on `app` is a **Compose-only** feature — if this stack is deployed to Docker Swarm (which is what Portainer's "Stacks" typically run under), Swarm silently ignores that condition and starts `app` and `db` with no ordering guarantee. Combined with `asyncHandler` (below) not existing at some point in this app's history, a request landing before Postgres was ready used to crash the whole container permanently. The restart policy is the real safety net under Swarm; don't remove it on the assumption that `depends_on` is doing that job.
+
 Local development without Docker (requires a reachable Postgres, e.g. `docker compose up db`):
 
 ```bash
@@ -37,6 +39,7 @@ There is no separate build/lint step — plain CommonJS, no bundler or TypeScrip
 - `src/routes/public.js` — unauthenticated read endpoints: settings, leaderboards, a team's individuals.
 - `src/routes/admin.js` — authenticated write endpoints: competition settings, teams/individuals CRUD + score awards, reset.
 - `src/db.js` — exports a shared `pg` `Pool` (`DATABASE_URL` env var). All queries go through this pool directly; no ORM/query builder.
+- `src/asyncHandler.js` — wraps every async route handler in `routes/public.js` and `routes/admin.js` (except `/api/health`, which has its own try/catch). **This is load-bearing, not boilerplate**: Express 4 does not catch rejected promises from async handlers, so an unhandled DB error becomes an unhandled promise rejection, which crashes the whole Node process (Node's default behavior since v15). That crash previously took the container down for good — no restart policy was set, so it just stayed exited. Any new route handler that touches `pool.query` must be wrapped in `asyncHandler(...)`, or a single bad/slow query can kill the container again. `server.js` also has a final 4-arg error-handling middleware as a backstop that turns anything `asyncHandler` catches into a `500` instead of a crash.
 - `db/init.sql` — schema, auto-applied by the official `postgres` image's docker-entrypoint-initdb.d mechanism **only on first container start with an empty volume**. If you change the schema, either `docker compose down -v` to force re-init, or write a migration and apply it manually — there is no migration tool wired up.
 - `public/` — public frontend (`index.html` + `app.js` + `style.css`), served directly by Express via `express.static`. No build step, no framework — plain DOM/fetch.
 - `public/admin/` — admin frontend, same static-serving mechanism, reachable at `/admin/`. It's plain HTML/JS with no auth gate on the static files themselves — only the `/api/admin/*` calls it makes are protected; loading the page unauthenticated just shows a login form.

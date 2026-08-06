@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    restart: unless-stopped
     ports:
       - "8082:3000"
     environment:
@@ -13,6 +14,7 @@ services:
 
   db:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: leaderboard
       POSTGRES_PASSWORD: leaderboard

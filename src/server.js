@@ -40,6 +40,13 @@ app.use('/api/admin', requireAdmin, adminRoutes);
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+// Last-resort handler: route handlers use asyncHandler to route DB/other errors
+// here instead of crashing the process via an unhandled promise rejection.
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 app.listen(PORT, () => {
   console.log(`Leaderboard app listening on port ${PORT}`);
 });
