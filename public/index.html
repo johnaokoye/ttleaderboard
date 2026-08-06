@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="brand">
+      <img class="logo-img" src="images/logo.png" alt="Total Tools Leaderboard" />
+      <p class="tagline" data-competition-name>Loading…</p>
+    </header>
+
+    <main class="boards">
+      <section class="board" data-kind="team" hidden>
+        <h2 class="board-title">Teams</h2>
+        <div class="card">
+          <div class="row row--header">
+            <span>Position</span>
+            <span>Name</span>
+            <span class="col-score">Score</span>
+          </div>
+          <div class="rows" data-rows></div>
+          <div class="updated-pill">Last Updated: <span data-updated>—</span></div>
+        </div>
+      </section>
+
+      <section class="board" data-kind="individual" hidden>
+        <h2 class="board-title" data-individual-title>Individuals</h2>
+        <div class="card">
+          <p class="board-hint" data-team-hint hidden>Select a team to see their individual scores.</p>
+          <div class="row row--header" data-individual-header>
+            <span>Position</span>
+            <span>Name</span>
+            <span class="col-score">Score</span>
+          </div>
+          <div class="rows" data-rows></div>
+          <div class="updated-pill">Last Updated: <span data-updated>—</span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

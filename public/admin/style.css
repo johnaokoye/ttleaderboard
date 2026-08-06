@@ -1,0 +1,269 @@
+:root {
+  --green: #007e37;
+  --gold: #f6c915;
+  --danger: #c0392b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--green);
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page-title {
+  color: #fff;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.view-link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card h2 {
+  margin-top: 0;
+  color: var(--green);
+}
+
+#login-form {
+  display: flex;
+  gap: 10px;
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 600;
+  min-height: 20px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #222;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.radio input {
+  width: auto;
+  margin: 0;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--gold);
+  color: var(--green);
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+button.danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.status {
+  margin-left: 10px;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.inline-form input,
+.inline-form select {
+  width: auto;
+  margin-top: 0;
+  flex: 1;
+  min-width: 120px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+td .award-row {
+  display: flex;
+  gap: 6px;
+}
+
+td input[type='number'] {
+  width: 80px;
+}
+
+td button,
+td select {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.derived-note {
+  color: #666;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.reset-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 24px 14px 56px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  #login-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Turn each table row into a stacked card: thead hidden, each <td> becomes
+     a label/value line using its data-label attribute (set in app.js). */
+  thead {
+    display: none;
+  }
+
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  tr {
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #777;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+
+  td select,
+  td input[type='number'] {
+    max-width: 130px;
+  }
+}
