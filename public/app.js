@@ -28,6 +28,33 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// fetch() never times out on its own — if the server hangs (e.g. it can't
+// reach the database), the page would otherwise be stuck on "Loading…"
+// forever with no error. Bound every request and surface a clear failure.
+async function fetchJSON(url, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) {
+      throw new Error(`Request to ${url} failed (${res.status})`);
+    }
+    return await res.json();
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error(`Request to ${url} timed out`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function showLoadError(message) {
+  const tagline = document.querySelector('[data-competition-name]');
+  tagline.textContent = message;
+}
+
 function renderRows(board, scores, { clickable = false } = {}) {
   const rowsEl = board.querySelector('[data-rows]');
   rowsEl.innerHTML = scores
@@ -55,8 +82,7 @@ function renderRows(board, scores, { clickable = false } = {}) {
 }
 
 async function loadTeams() {
-  const res = await fetch('/api/leaderboard?kind=team&limit=5');
-  const scores = await res.json();
+  const scores = await fetchJSON('/api/leaderboard?kind=team&limit=5');
   renderRows(teamBoard, scores, { clickable: state.settings.mode === 'both' });
 
   if (state.settings.mode === 'both') {
@@ -74,8 +100,7 @@ async function loadTeams() {
 }
 
 async function loadIndividualsGlobal() {
-  const res = await fetch('/api/leaderboard?kind=individual&limit=5');
-  const scores = await res.json();
+  const scores = await fetchJSON('/api/leaderboard?kind=individual&limit=5');
   renderRows(indivBoard, scores);
 }
 
@@ -85,16 +110,14 @@ async function selectTeam(teamId, teamName) {
   indivHeader.hidden = false;
   indivTitle.textContent = `Individuals — ${teamName}`;
 
-  const res = await fetch(`/api/teams/${teamId}/individuals?limit=10`);
-  const scores = await res.json();
+  const scores = await fetchJSON(`/api/teams/${teamId}/individuals?limit=10`);
   renderRows(indivBoard, scores);
 
   loadTeams();
 }
 
 async function init() {
-  const res = await fetch('/api/settings');
-  state.settings = await res.json();
+  state.settings = await fetchJSON('/api/settings');
 
   document.querySelector('[data-competition-name]').textContent = state.settings.name;
 
@@ -112,4 +135,7 @@ async function init() {
   if (mode === 'individual') await loadIndividualsGlobal();
 }
 
-init();
+init().catch((err) => {
+  console.error(err);
+  showLoadError("Couldn't load the leaderboard. Please refresh the page.");
+});
