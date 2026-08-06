@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:3000"
+      - "8082:3000"
     environment:
       DATABASE_URL: postgres://leaderboard:leaderboard@db:5432/leaderboard
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}

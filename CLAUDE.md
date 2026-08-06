@@ -17,7 +17,7 @@ docker compose down             # stop (keeps db_data volume)
 docker compose down -v          # stop and wipe the database
 ```
 
-The app is on host port **8080** (mapped to container port 3000 in `docker-compose.yml`) — chosen because 3000/5000/5432 were already bound on the host dev machine. Adjust the `ports` mapping in `docker-compose.yml` if that changes.
+The app is on host port **8082** (mapped to container port 3000 in `docker-compose.yml`) — 3000/5000/5432/8080 were already bound on the host dev machine. Adjust the `ports` mapping in `docker-compose.yml` if that changes.
 
 Local development without Docker (requires a reachable Postgres, e.g. `docker compose up db`):
 

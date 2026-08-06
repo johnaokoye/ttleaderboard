@@ -8,7 +8,7 @@ A leaderboard API and web UI backed by Postgres, containerized with Docker, with
 docker compose up --build
 ```
 
-The public board is at http://localhost:8080, the admin panel at http://localhost:8080/admin/. Postgres data persists in the `db_data` volume.
+The public board is at http://localhost:8082, the admin panel at http://localhost:8082/admin/. Postgres data persists in the `db_data` volume.
 
 The admin login password defaults to `change-me` (see `docker-compose.yml`). Override it — and the session secret — before using this beyond local dev by creating a `.env` file next to `docker-compose.yml`:
 
