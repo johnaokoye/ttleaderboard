@@ -1,6 +1,7 @@
 const express = require('express');
 const { pool } = require('../db');
 const asyncHandler = require('../asyncHandler');
+const { verifyPassword, mustChangePassword, setPassword } = require('../auth');
 
 const router = express.Router();
 
@@ -15,6 +16,34 @@ async function teamHasMembers(id) {
   const { rows } = await pool.query('SELECT COUNT(*)::int AS count FROM individuals WHERE team_id = $1', [id]);
   return rows[0].count > 0;
 }
+
+// Blocks every /api/admin/* route except the one that lets you get unblocked.
+// This is enforced here, not just hidden in the UI, so it can't be bypassed
+// by calling the API directly.
+router.use(
+  asyncHandler(async (req, res, next) => {
+    if (req.path === '/change-password') return next();
+    if (await mustChangePassword()) {
+      return res.status(403).json({ error: 'Password change required before continuing' });
+    }
+    next();
+  })
+);
+
+router.post(
+  '/change-password',
+  asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters' });
+    }
+    if (!(await verifyPassword(currentPassword))) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+    await setPassword(newPassword);
+    res.json({ ok: true });
+  })
+);
 
 // --- Competition settings ---
 

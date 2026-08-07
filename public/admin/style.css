@@ -69,6 +69,19 @@ body {
   gap: 10px;
 }
 
+.force-notice {
+  background: #fff3cd;
+  color: #7a5b00;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+#dashboard.password-locked > .card:not(#security-card) {
+  display: none;
+}
+
 .error {
   color: var(--danger);
   font-weight: 600;

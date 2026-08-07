@@ -1,3 +1,15 @@
+-- Note: this table is not seeded here (needs a bcrypt hash, which plain SQL
+-- can't compute) — src/auth.js's ensureAdminSeeded() creates it defensively
+-- at runtime too and seeds the initial row from ADMIN_PASSWORD, so this works
+-- even on a database that predates this table (no volume wipe required).
+CREATE TABLE IF NOT EXISTS admin_credentials (
+    id SMALLINT PRIMARY KEY DEFAULT 1,
+    password_hash VARCHAR(100) NOT NULL,
+    must_change_password BOOLEAN NOT NULL DEFAULT true,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT admin_credentials_single_row CHECK (id = 1)
+);
+
 CREATE TABLE IF NOT EXISTS competition (
     id SMALLINT PRIMARY KEY DEFAULT 1,
     name VARCHAR(120) NOT NULL DEFAULT 'Store Competition',

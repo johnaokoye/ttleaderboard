@@ -189,6 +189,14 @@ body {
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
 }
 
+.select-team-hint {
+  text-align: center;
+  color: #d7f0dd;
+  font-weight: 500;
+  font-size: 14px;
+  margin: 44px 0 0;
+}
+
 @media (max-width: 480px) {
   .page {
     padding: 32px 16px 56px;

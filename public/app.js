@@ -5,6 +5,7 @@ const indivBoard = document.querySelector('.board[data-kind="individual"]');
 const indivTitle = document.querySelector('[data-individual-title]');
 const indivHeader = document.querySelector('[data-individual-header]');
 const teamHint = document.querySelector('[data-team-hint]');
+const selectTeamHint = document.querySelector('[data-select-team-hint]');
 
 function ordinal(n) {
   const suffixes = ['th', 'st', 'nd', 'rd'];
@@ -129,6 +130,7 @@ async function init() {
   if (mode === 'both') {
     teamHint.hidden = false;
     indivHeader.hidden = true;
+    selectTeamHint.hidden = false;
   }
 
   if (mode !== 'individual') await loadTeams();

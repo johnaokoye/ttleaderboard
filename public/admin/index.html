@@ -28,6 +28,30 @@
         <button id="logout-btn" class="link-btn">Log out</button>
       </div>
 
+      <section id="security-card" class="card">
+        <h2>Security</h2>
+        <p id="force-password-notice" class="force-notice" hidden>
+          You're signed in with the default password. Set a new one to continue.
+        </p>
+        <form id="change-password-form">
+          <label>
+            Current password
+            <input type="password" id="current-password" required />
+          </label>
+          <label>
+            New password
+            <input type="password" id="new-password" required minlength="8" />
+          </label>
+          <label>
+            Confirm new password
+            <input type="password" id="confirm-password" required minlength="8" />
+          </label>
+          <button type="submit">Update password</button>
+          <span class="status" id="password-status"></span>
+        </form>
+        <p class="error" id="password-error"></p>
+      </section>
+
       <section class="card">
         <h2>Competition</h2>
         <form id="settings-form">

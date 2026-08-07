@@ -40,13 +40,21 @@ async function api(path, options) {
 async function checkSession() {
   const res = await fetch('/api/admin/session');
   const data = await res.json();
-  setAuthenticated(data.authenticated);
+  setAuthenticated(data.authenticated, data.mustChangePassword);
 }
 
-function setAuthenticated(isAuth) {
+function setAuthenticated(isAuth, mustChange = false) {
   loginSection.hidden = isAuth;
   dashboard.hidden = !isAuth;
-  if (isAuth) loadAll();
+  if (!isAuth) return;
+
+  applyPasswordLock(mustChange);
+  if (!mustChange) loadAll();
+}
+
+function applyPasswordLock(mustChange) {
+  dashboard.classList.toggle('password-locked', mustChange);
+  document.getElementById('force-password-notice').hidden = !mustChange;
 }
 
 loginForm.addEventListener('submit', async (e) => {
@@ -59,8 +67,9 @@ loginForm.addEventListener('submit', async (e) => {
     body: JSON.stringify({ password }),
   });
   if (res.ok) {
+    const data = await res.json();
     loginForm.reset();
-    setAuthenticated(true);
+    setAuthenticated(true, data.mustChangePassword);
   } else {
     loginError.textContent = 'Incorrect password';
   }
@@ -69,6 +78,32 @@ loginForm.addEventListener('submit', async (e) => {
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await fetch('/api/admin/logout', { method: 'POST' });
   setAuthenticated(false);
+});
+
+document.getElementById('change-password-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById('password-error');
+  errorEl.textContent = '';
+
+  const currentPassword = document.getElementById('current-password').value;
+  const newPassword = document.getElementById('new-password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+
+  if (newPassword !== confirmPassword) {
+    errorEl.textContent = "New password and confirmation don't match";
+    return;
+  }
+
+  try {
+    await api('/change-password', { method: 'POST', body: JSON.stringify({ currentPassword, newPassword }) });
+    e.target.reset();
+    flashStatus('password-status', 'Password updated');
+    const wasLocked = dashboard.classList.contains('password-locked');
+    applyPasswordLock(false);
+    if (wasLocked) loadAll();
+  } catch (err) {
+    errorEl.textContent = err.message;
+  }
 });
 
 async function loadAll() {
