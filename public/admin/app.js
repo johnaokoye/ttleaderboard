@@ -206,6 +206,14 @@ async function loadIndividuals() {
   renderIndividuals();
 }
 
+// A team's score is derived from its individuals, so anything that changes
+// an individual's score or team_id can change what a team should display —
+// refresh both, not just individuals.
+async function loadIndividualsAndTeams() {
+  await loadIndividuals();
+  await loadTeams();
+}
+
 function renderIndividuals() {
   const tbody = document.getElementById('individuals-body');
   tbody.innerHTML = individualsCache
@@ -245,7 +253,7 @@ document.getElementById('add-individual-form').addEventListener('submit', async 
     await api('/individuals', { method: 'POST', body: JSON.stringify({ name, team_id, score }) });
     e.target.reset();
     document.getElementById('indiv-score').value = '0';
-    loadIndividuals();
+    loadIndividualsAndTeams();
   } catch (err) {
     alert(err.message);
   }
@@ -262,7 +270,7 @@ document.getElementById('individuals-body').addEventListener('click', async (e) 
     if (!Number.isInteger(points)) return alert('Enter a number of points');
     try {
       await api(`/individuals/${id}/award`, { method: 'POST', body: JSON.stringify({ points }) });
-      loadIndividuals();
+      loadIndividualsAndTeams();
     } catch (err) {
       alert(err.message);
     }
@@ -284,7 +292,7 @@ document.getElementById('individuals-body').addEventListener('click', async (e) 
     if (!confirm('Delete this individual?')) return;
     try {
       await api(`/individuals/${id}`, { method: 'DELETE' });
-      loadIndividuals();
+      loadIndividualsAndTeams();
     } catch (err) {
       alert(err.message);
     }
@@ -297,7 +305,7 @@ document.getElementById('individuals-body').addEventListener('change', async (e)
   const id = row.dataset.id;
   try {
     await api(`/individuals/${id}`, { method: 'PATCH', body: JSON.stringify({ team_id: e.target.value || null }) });
-    loadIndividuals();
+    loadIndividualsAndTeams();
   } catch (err) {
     alert(err.message);
   }
