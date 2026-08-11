@@ -91,6 +91,11 @@ body {
   font-size: 16px;
 }
 
+.rows {
+  max-height: 236px;
+  overflow-y: auto;
+}
+
 .row--header {
   background: var(--gold);
   color: var(--green);

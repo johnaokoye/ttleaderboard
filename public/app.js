@@ -83,7 +83,7 @@ function renderRows(board, scores, { clickable = false } = {}) {
 }
 
 async function loadTeams() {
-  const scores = await fetchJSON('/api/leaderboard?kind=team&limit=5');
+  const scores = await fetchJSON('/api/leaderboard?kind=team&limit=100');
   renderRows(teamBoard, scores, { clickable: state.settings.mode === 'both' });
 
   if (state.settings.mode === 'both') {
@@ -101,7 +101,7 @@ async function loadTeams() {
 }
 
 async function loadIndividualsGlobal() {
-  const scores = await fetchJSON('/api/leaderboard?kind=individual&limit=5');
+  const scores = await fetchJSON('/api/leaderboard?kind=individual&limit=100');
   renderRows(indivBoard, scores);
 }
 
